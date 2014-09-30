@@ -1,0 +1,13 @@
+#note {
+  border: 1px;
+  width: 500px;
+  margin: 10px;
+}
+
+ul#notes {
+  list-style-type: none;
+}
+
+#note-body {
+  margin: 5px;
+}
