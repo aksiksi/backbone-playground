@@ -11,3 +11,8 @@ ul#notes {
 #note-body {
   margin: 5px;
 }
+
+.submit {
+  font-size: 15px;
+  padding: 10px;
+}

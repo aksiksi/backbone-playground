@@ -1,7 +1,12 @@
-var app = {};
+// Proper namespacing
+window.App = {
+  Models: {},
+  Collections: {},
+  Views: {}
+};
 
 $(document).ready(function() {
-  app.Note = Backbone.Model.extend({
+  App.Models.Note = Backbone.Model.extend({
     defaults: {
       author: 'James',
       date: Date().toString(),
@@ -10,7 +15,7 @@ $(document).ready(function() {
     }
   });
 
-  app.NoteView = Backbone.View.extend({
+  App.Views.Note = Backbone.View.extend({
     tagName: 'li',
     template: _.template($('#note-template').html()),
 
@@ -25,18 +30,18 @@ $(document).ready(function() {
     },
 
     deleteNote: function() {
-      // Destroy the note's model and clear its view
+      // Destroy the note's model and remove its view
       this.model.destroy();
-      this.$el.html('');
+      this.remove();
     }
   });
 
-  app.NoteList = Backbone.Collection.extend({
-    model: app.Note,
+  App.Collections.Notes = Backbone.Collection.extend({
+    model: App.Models.Note,
     localStorage: new Store('backbone-notes')
   });
 
-  app.AppView = Backbone.View.extend({
+  App.Views.Notes = Backbone.View.extend({
     el: '#notes-app',
 
     initialize: function() {
@@ -45,14 +50,11 @@ $(document).ready(function() {
       this.author = this.$('#author');
       this.body = this.$('#body');
 
-      // Create a new collection
-      app.noteList = new app.NoteList();
-
       // Whenever a new item is added to NoteList render its view
-      app.noteList.on('add', this.renderNote, this);
+      notesCollection.on('add', this.renderNote, this);
 
       // Fetch all notes from LocalStorage
-      app.noteList.fetch();
+      notesCollection.fetch();
     },
 
     events: {
@@ -61,12 +63,12 @@ $(document).ready(function() {
     },
 
     renderNote: function(note) {
-      var view = new app.NoteView({model: note});
+      var view = new App.Views.Note({model: note});
       $('#notes').append(view.render().el);
     },
 
     createNote: function() {
-      app.noteList.create(this.getInputs());
+      notesCollection.create(this.getInputs());
     },
 
     getInputs: function() {
@@ -78,5 +80,6 @@ $(document).ready(function() {
     }
   });
 
-  app.AppView = new app.AppView();
+  var notesCollection = new App.Collections.Notes();
+  var notesView = new App.Views.Notes({'notesCollection': notesCollection});
 });
