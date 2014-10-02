@@ -16,3 +16,16 @@ ul#notes {
   font-size: 15px;
   padding: 10px;
 }
+
+#links {
+}
+
+a.nav {
+  margin: 5px;
+  float: left;
+}
+
+.clear {
+  float: none;
+  clear: both;
+}

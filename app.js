@@ -2,10 +2,38 @@
 window.App = {
   Models: {},
   Collections: {},
-  Views: {}
+  Views: {},
+  currentView: null
 };
 
 $(document).ready(function() {
+
+  App.Router = Backbone.Router.extend({
+    routes: {
+      '': 'index',
+      'notes': 'notes'
+    },
+
+    index: function() {
+      console.log('INDEX!');
+      
+      this.removeView();
+      App.currentView = new App.Views.Index();
+    },
+
+    notes: function() {
+      console.log('NOTES!');
+
+      this.removeView();
+      App.currentView = new App.Views.Notes();
+    },
+
+    removeView: function() {
+      if (App.currentView)
+        App.currentView.destroy();
+    }
+  });
+
   App.Models.Note = Backbone.Model.extend({
     defaults: {
       author: 'James',
@@ -42,19 +70,62 @@ $(document).ready(function() {
   });
 
   App.Views.Notes = Backbone.View.extend({
-    el: '#notes-app',
+    id: '#notes',
+    template: _.template($('#notes-template').html(), {}),
+    
+    initialize: function() {
+      this.render();
+
+      // Fetch all notes from LocalStorage
+      notes.fetch();
+
+      // Render each note
+      notes.each(function(note) {
+        console.log(note);
+        this.renderNote(note);
+      }, this);
+    },
+
+    render: function() {
+      // Insert template into DOM
+      $('#view').html(this.template());
+
+      // Set el to notes-list
+      this.setElement('#notes-list');
+
+      console.log(this.el);
+    },
+
+    renderNote: function(note) {
+      var view = new App.Views.Note({model: note});
+      this.$el.append(view.render().el);
+    },
+
+    destroy: function() {
+      $(this.id).remove();
+      this.remove();
+    }
+  });
+
+  App.Views.Index = Backbone.View.extend({
+    id: '#index',
+    template: _.template($('#index-template').html(), {}),
 
     initialize: function() {
+      this.render();
+      
       // Instance variables for the inputs
       this.title = this.$('#title');
       this.author = this.$('#author');
       this.body = this.$('#body');
+    },
 
-      // Whenever a new item is added to NoteList render its view
-      notesCollection.on('add', this.renderNote, this);
+    render: function() {
+      // Setup el from template
+      this.setElement(this.template());
 
-      // Fetch all notes from LocalStorage
-      notesCollection.fetch();
+      // Insert el into DOM
+      $('#view').html(this.el);
     },
 
     events: {
@@ -62,13 +133,8 @@ $(document).ready(function() {
       'click .submit': 'createNote'
     },
 
-    renderNote: function(note) {
-      var view = new App.Views.Note({model: note});
-      $('#notes').append(view.render().el);
-    },
-
     createNote: function() {
-      notesCollection.create(this.getInputs());
+      notes.create(this.getInputs());
     },
 
     getInputs: function() {
@@ -77,9 +143,19 @@ $(document).ready(function() {
         author: this.author.val().trim(),
         body: this.body.val().trim()
       };
+    },
+
+    destroy: function() {
+      // Clear the view's HTML
+      this.$el.remove();
+
+      // Remove view the Backbone way
+      this.remove();
     }
   });
 
-  var notesCollection = new App.Collections.Notes();
-  var notesView = new App.Views.Notes({'notesCollection': notesCollection});
+  var Router = new App.Router();
+  var notes = new App.Collections.Notes();
+
+  Backbone.history.start();
 });

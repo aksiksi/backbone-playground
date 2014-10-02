@@ -22,23 +22,40 @@
                 <p><button class="delete-note" type="button">Delete</button></p>
             </div>
         </script>
-    </header>
-    <body>
+
+        <script type="text/template" id="index-template">
+            <div id="index">
+                <h3 class="clear">New note</h3>
+
+                <p><input type="text" id="title" placeholder="Title"></p>
+                <p><input type="text" id="author" placeholder="Author"></p>
+                <p><textarea name="note" id="body" cols="60" rows="10" placeholder="Enter notes..."></textarea></p>
+
+                <p><button class="submit" type="button">Submit</button></p>
+            </div>
+        </script>
+
+        <script type="text/template" id="notes-template">
+            <div id="notes">
+                <h3 class="clear">Notes</h3>
+
+                <ul id="notes-list">
+                </ul>
+            </div>
+        </script>
+
         <h1>Note Taker</h1>
-        
-        <div id="notes-app">
-            <h3>New note</h3>
-
-            <p><input type="text" id="title" placeholder="Title"></p>
-            <p><input type="text" id="author" placeholder="Author"></p>
-            <p><textarea name="note" id="body" cols="60" rows="10" placeholder="Enter notes..."></textarea></p>
-
-            <p><button class="submit" type="button">Submit</button></p>
-
-            <h3>Recent notes</h3>
-
-            <ul id="notes">
-            </ul>
+    </header>
+    
+    <nav>
+        <div id="links">
+            <a class="nav" href="index.html">New note</a>
+            <a class="nav" href="index.html#/notes">View notes</a>
+        </div>
+    </nav>
+    
+    <body>
+        <div id="view">
         </div>
     </body>
     <footer>
